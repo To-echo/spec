@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"reflect"
 	"sort"
+
+	"github.com/iancoleman/orderedmap"
 )
 
 // OrderSchemaItem holds a named schema (e.g. from a property of an object)
@@ -67,24 +69,57 @@ func (items OrderSchemaItems) Less(i, j int) (ret bool) {
 
 // SchemaProperties is a map representing the properties of a Schema object.
 // It knows how to transform its keys into an ordered slice.
-type SchemaProperties map[string]Schema
+type SchemaProperties struct {
+	Origin map[string]Schema
+	omap   *orderedmap.OrderedMap
+}
+
+func NewSchemaProperties() *SchemaProperties {
+	return &SchemaProperties{
+		Origin: make(map[string]Schema),
+		omap:   orderedmap.New(),
+	}
+}
+
+func (s SchemaProperties) Set(k string, v Schema) {
+	s.Origin[k] = v
+	s.omap.Set(k, v)
+}
+
+func (s SchemaProperties) Len() int {
+	if s.Origin == nil {
+		return 0
+	}
+	return len(s.Origin)
+}
 
 // ToOrderedSchemaItems transforms the map of properties into a sortable slice
 func (properties SchemaProperties) ToOrderedSchemaItems() OrderSchemaItems {
-	items := make(OrderSchemaItems, 0, len(properties))
-	for k, v := range properties {
-		items = append(items, OrderSchemaItem{
-			Name:   k,
-			Schema: v,
-		})
+	items := make(OrderSchemaItems, 0, len(properties.Origin))
+	if properties.omap != nil {
+		keys := properties.omap.Keys()
+		for _, key := range keys {
+			items = append(items, OrderSchemaItem{
+				Name:   key,
+				Schema: properties.Origin[key],
+			})
+		}
+		return items
+	} else {
+		for k, v := range properties.Origin {
+			items = append(items, OrderSchemaItem{
+				Name:   k,
+				Schema: v,
+			})
+		}
+		sort.Sort(items)
+		return items
 	}
-	sort.Sort(items)
-	return items
 }
 
 // MarshalJSON produces properties as json, keeping their order.
 func (properties SchemaProperties) MarshalJSON() ([]byte, error) {
-	if properties == nil {
+	if properties.Origin == nil {
 		return []byte("null"), nil
 	}
 	return json.Marshal(properties.ToOrderedSchemaItems())

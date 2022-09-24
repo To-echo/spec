@@ -269,13 +269,13 @@ func expandSchema(target Schema, parentRefs []string, resolver *schemaLoader, ba
 		}
 	}
 
-	for k := range target.Properties {
-		t, err := expandSchema(target.Properties[k], parentRefs, resolver, basePath)
+	for k := range target.Properties.Origin {
+		t, err := expandSchema(target.Properties.Origin[k], parentRefs, resolver, basePath)
 		if resolver.shouldStopOnError(err) {
 			return &target, err
 		}
 		if t != nil {
-			target.Properties[k] = *t
+			target.Properties.Origin[k] = *t
 		}
 	}
 
@@ -289,13 +289,13 @@ func expandSchema(target Schema, parentRefs []string, resolver *schemaLoader, ba
 		}
 	}
 
-	for k := range target.PatternProperties {
-		t, err := expandSchema(target.PatternProperties[k], parentRefs, resolver, basePath)
+	for k := range target.PatternProperties.Origin {
+		t, err := expandSchema(target.PatternProperties.Origin[k], parentRefs, resolver, basePath)
 		if resolver.shouldStopOnError(err) {
 			return &target, err
 		}
 		if t != nil {
-			target.PatternProperties[k] = *t
+			target.PatternProperties.Origin[k] = *t
 		}
 	}
 

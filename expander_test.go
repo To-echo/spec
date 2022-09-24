@@ -394,7 +394,7 @@ func TestExpand_InternalSchemas2(t *testing.T) {
 
 	// verify unmarshaled structure
 	schema := spec.Definitions["car"]
-	oldBrand := schema.Properties["brand"]
+	oldBrand := schema.Properties.Origin["brand"]
 	require.NotEmpty(t, oldBrand.Items.Schema.Ref.String()) // this is a $ref
 	require.NotEqual(t, spec.Definitions["brand"], oldBrand)
 
@@ -402,7 +402,7 @@ func TestExpand_InternalSchemas2(t *testing.T) {
 	require.NoError(t, err)
 
 	// verify expanded schema for Car, in the document passed
-	newBrand := schema.Properties["brand"]
+	newBrand := schema.Properties.Origin["brand"]
 	assert.Empty(t, newBrand.Items.Schema.Ref.String())
 	assert.Equal(t, spec.Definitions["brand"], *newBrand.Items.Schema)
 
@@ -517,7 +517,7 @@ func TestExpand_InternalSchemas2(t *testing.T) {
 	require.NotNil(t, s)
 
 	schema = *s
-	prop := schema.PatternProperties["^x-ab"]
+	prop := schema.PatternProperties.Origin["^x-ab"]
 	assert.Empty(t, prop.Items.Schema.Ref.String())
 	assert.Equal(t, *prop.Items.Schema, spec.Definitions["tag"])
 
@@ -556,7 +556,7 @@ func TestExpand_InternalSchemas1(t *testing.T) {
 	resolver := defaultSchemaLoader(spec, nil, nil, nil)
 
 	schema := spec.Definitions["car"]
-	oldBrand := schema.Properties["brand"]
+	oldBrand := schema.Properties.Origin["brand"]
 	assert.NotEmpty(t, oldBrand.Ref.String())
 	assert.NotEqual(t, spec.Definitions["brand"], oldBrand)
 
@@ -566,7 +566,7 @@ func TestExpand_InternalSchemas1(t *testing.T) {
 
 	schema = *s
 
-	newBrand := schema.Properties["brand"]
+	newBrand := schema.Properties.Origin["brand"]
 	assert.Empty(t, newBrand.Ref.String())
 	assert.Equal(t, spec.Definitions["brand"], newBrand)
 
@@ -671,7 +671,7 @@ func TestExpand_InternalSchemas1(t *testing.T) {
 	require.NotNil(t, s)
 
 	schema = *s
-	prop := schema.PatternProperties["^x-ab"]
+	prop := schema.PatternProperties.Origin["^x-ab"]
 	assert.Empty(t, prop.Ref.String())
 	assert.Equal(t, prop, spec.Definitions["tag"])
 

@@ -1,6 +1,7 @@
 module github.com/go-openapi/spec
 
 require (
+	github.com/iancoleman/orderedmap v0.2.0
 	github.com/go-openapi/jsonpointer v0.19.5
 	github.com/go-openapi/jsonreference v0.20.0
 	github.com/go-openapi/swag v0.19.15

@@ -164,14 +164,14 @@ func (v CommonValidations) HasEnum() bool {
 type SchemaValidations struct {
 	CommonValidations
 
-	PatternProperties SchemaProperties `json:"patternProperties,omitempty"`
-	MaxProperties     *int64           `json:"maxProperties,omitempty"`
-	MinProperties     *int64           `json:"minProperties,omitempty"`
+	PatternProperties *SchemaProperties `json:"patternProperties,omitempty"`
+	MaxProperties     *int64            `json:"maxProperties,omitempty"`
+	MinProperties     *int64            `json:"minProperties,omitempty"`
 }
 
 // HasObjectValidations indicates if the validations are for objects
 func (v SchemaValidations) HasObjectValidations() bool {
-	return v.MaxProperties != nil || v.MinProperties != nil || v.PatternProperties != nil
+	return v.MaxProperties != nil || v.MinProperties != nil || v.PatternProperties.Origin != nil
 }
 
 // SetValidations for schema validations
@@ -208,8 +208,8 @@ func (v *SchemaValidations) ClearObjectValidations(cbs ...func(string, interface
 		done = append(done, clearedValidation{Validation: "minProperties", Value: v.MinProperties})
 		v.MinProperties = nil
 	}
-	if v.PatternProperties != nil {
+	if v.PatternProperties.Origin != nil {
 		done = append(done, clearedValidation{Validation: "patternProperties", Value: v.PatternProperties})
-		v.PatternProperties = nil
+		v.PatternProperties.Origin = nil
 	}
 }
