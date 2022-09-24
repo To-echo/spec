@@ -1,4 +1,4 @@
-module github.com/go-openapi/spec
+module github.com/To-echo/spec
 
 require (
 	github.com/iancoleman/orderedmap v0.2.0
